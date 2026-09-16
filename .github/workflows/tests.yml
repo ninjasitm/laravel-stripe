@@ -14,13 +14,14 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [ 8.2, 8.3, 8.4, 8.5 ]
-        laravel: [ 12, 13 ]
-        exclude:
-          - laravel: 13
-            php: 8.2
+        php: [ 8.4 ]
+        include:
           - laravel: 11
-            php: 8.5
+            testbench: 9.14
+          - laravel: 12
+            testbench: 10.0
+          - laravel: 13
+            testbench: 11.0
 
     steps:
       - name: Checkout Code
@@ -30,13 +31,13 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
+          extensions: bcmath, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
           tools: composer:v2
           coverage: none
           ini-values: error_reporting=E_ALL
 
       - name: Set Laravel Version
-        run: composer require "laravel/framework:^${{ matrix.laravel }}" --no-update
+        run: composer require "laravel/framework:^${{ matrix.laravel }}" "orchestra/testbench:^${{ matrix.testbench }}" --no-update
 
       - name: Install dependencies
         uses: nick-fields/retry@v4
@@ -44,6 +45,9 @@ jobs:
           timeout_minutes: 5
           max_attempts: 5
           command: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Validate Composer manifest
+        run: composer validate --strict
 
       - name: Execute style
         run: composer run style
