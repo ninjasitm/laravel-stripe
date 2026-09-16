@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## Unreleased
 
+### Changed
+
+- Restored Laravel 11 support and PHP 8.4 CI coverage for Laravel 11, 12, and 13.
+
 ## [0.9.1] - 2026-07-07
 
 ### Removed
